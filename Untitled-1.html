@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decimal -> Binary Converter</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+
+      .card {
+        background: #e2e8f0;
+        color: #0f172a;
+        padding: 2rem;
+        border-radius: 16px;
+        width: min(240px, 92vw);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      h1 {
+        margin: 0 0 1.25rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #1e293b;
+        color: #e2e8f0;
+        outline: none;
+        transition: border-color 0.15s ease;
+      }
+
+      input:focus {
+        border-color: #38bdf8;
+      }
+
+      input.invalid {
+        border-color: #f87171;
+      }
+
+      .error {
+        color: #f87171;
+        font-size: 0.75rem;
+        min-height: 1rem;
+        margin-top: 0.35rem;
+      }
+
+      .result {
+        margin-top: 1.5rem;
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .result .label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .result .value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-top: 0.25rem;
+      }
+
+      .result .value.empty {
+        color: #475569;
+      }
+
+      .meta {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #64748b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Decimal → Binary Converter</h1>
+      <label for="decimal">Decimal number</label>
+      <input
+        id="decimal"
+        type="text"
+        inputmode="numeric"
+        placeholder="e.g. 11"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <div class="error" id="error"></div>
+      <div class="result">
+        <div class="label">Binary</div>
+        <div class="value empty" id="output">-</div>
+        <div class="meta" id="meta"></div>
+      </div>
+    </div>
+
+    <script>
+      const input = document.getElementById("decimal");
+      const output = document.getElementById("output");
+      const error = document.getElementById("error");
+      const meta = document.getElementById("meta");
+
+      function decimalToBinary(decStr) {
+        const value = decStr.trim();
+        if (value === "") return "0";
+        if (!/^-?\d+$/.test(value)) {
+          throw new Error("Please enter a valid decimal number.");
+        }
+
+        let n = BigInt(value);
+        if (n === 0n) return "0";
+
+        let bits = "";
+        const isNegative = n < 0n;
+        if (isNegative) n = -n;
+
+        while (n > 0n) {
+          bits = (n % 2n).toString() + bits;
+          n /= 2n;
+        }
+
+        return isNegative ? "-" + bits : bits;
+      }
+
+      function convert() {
+        const value = input.value.trim();
+
+        if (value === "") {
+          input.classList.remove("invalid");
+          error.textContent = "";
+          meta.textContent = "";
+          output.textContent = "-";
+          output.classList.add("empty");
+          return;
+        }
+
+        try {
+          const binaryStr = decimalToBinary(value);
+          output.textContent = binaryStr;
+          output.classList.remove("empty");
+          meta.textContent = `(${value} in decimal)`;
+          error.textContent = "";
+          input.classList.remove("invalid");
+        } catch (err) {
+          output.textContent = "-";
+          output.classList.add("empty");
+          meta.textContent = "";
+          error.textContent = err.message;
+          input.classList.add("invalid");
+        }
+      }
+
+      input.addEventListener("input", convert);
+    </script>
+  </body>
+</html>

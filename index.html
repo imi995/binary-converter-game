@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BINARY GAME</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #feedback {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Binary converter Game</h1>
+    <p>Convert the decimal number to binary.</p>
+    <p>Decimal: <span id="number">0</span></p>
+    <input id="answer" type="text" placeholder="Binary answer">
+    <button onclick="checkAnswer()">Check</button>
+    <p id="feedback"></p>
+    <p>Score: <span id="score">0</span></p>
+
+    <script>
+        let score = 0;
+        let currentNumber = 0;
+
+        function newRound() {
+            currentNumber = Math.floor(Math.random() * 16); // 0 to 15
+            document.getElementById('number').textContent = currentNumber;
+            document.getElementById('answer').value = '';
+            document.getElementById('feedback').textContent = '';
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answer').value.trim();
+            const correctAnswer = currentNumber.toString(2);
+
+            if (userAnswer === correctAnswer) {
+                score++;
+                document.getElementById('feedback').textContent = 'Correct!';
+                document.getElementById('score').textContent = score;
+                newRound();
+            } else {
+                document.getElementById('feedback').textContent = 'Not quite. ' + currentNumber + ' in binary is ' + correctAnswer;
+            }
+        }
+
+        newRound();
+    </script>
+</body>
+</html>
